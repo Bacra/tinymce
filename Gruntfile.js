@@ -639,6 +639,13 @@ module.exports = function(grunt) {
 			saucelabs: [
 				"?sc.log",
 				"sc_*.log"
+			],
+			dist: [
+				'dist/plugins',
+				'dist/skins',
+				'dist/themes',
+				'dist/tinymce.*.js',
+				'dist/jquery.tinymce.*.js'
 			]
 		},
 
@@ -678,6 +685,16 @@ module.exports = function(grunt) {
 				}
 			}
 		},
+
+		copy: {
+			dist: {
+				cwd: 'js/tinymce',
+				src: ['**/*', '!classes/**/*', '!langs/**/*', '!**/*.less', '!**/*.dev.json', '!**/*.dev.svg'],
+				dest: 'dist',
+				expand: true,
+				filter: 'isFile'
+			}
+		}
 	});
 
 	require("load-grunt-tasks")(grunt);
@@ -688,4 +705,7 @@ module.exports = function(grunt) {
 	grunt.registerTask("test", ["qunit"]);
 	grunt.registerTask("sc-test", ["connect", "clean:saucelabs", "saucelabs-qunit"]);
 	grunt.registerTask("default", ["lint", "minify", "test", "clean:release", "moxiezip", "nugetpack"]);
+	grunt.registerTask('to_dist', ['clean:dist', 'copy:dist']);
+	grunt.registerTask('ds_dist', ['lint', 'minify', 'to_dist']);
+	grunt.registerTask('dist', ['default', 'to_dist']);
 };
